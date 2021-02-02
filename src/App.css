@@ -111,12 +111,12 @@
   -webkit-overflow-scrolling: touch;
   position: fixed;
   width: 100%;
-  top: 115px;
-  height: calc(100% - 115px);
+  top: 50px;
+  height: calc(100% - 50px);
   overflow-x: hidden;
   overflow-y: scroll;
   background-color: rgb(31, 31, 51);
-  padding: 0px 10px 20px 10px;
+  padding: 25px 10px 25px 10px;
 }
 
 .copyrightText {

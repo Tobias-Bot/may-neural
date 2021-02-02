@@ -1,0 +1,30 @@
+.cover {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.rangePost {
+  margin: 20px 0px;
+}
+
+.rangeTitle {
+  position: relative;
+  font-size: 20px;
+  font-weight: 500;
+  color: black;
+}
+
+.form-range {
+  width: 100%;
+  color: aquamarine;
+}
+
+.question {
+  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+  opacity: 0.5;
+}
