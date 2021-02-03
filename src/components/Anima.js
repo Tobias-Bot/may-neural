@@ -41,6 +41,7 @@ class Anima extends React.Component {
     this.calculateData = this.calculateData.bind(this);
     this.getRandom = this.getRandom.bind(this);
     this.getInterfaceResults = this.getInterfaceResults.bind(this);
+    this.changeRangeValue = this.changeRangeValue.bind(this);
   }
 
   componentDidMount() {
@@ -423,6 +424,14 @@ class Anima extends React.Component {
     this.setState({ resultRages: this.outputs });
   }
 
+  changeRangeValue(i, e) {
+    let vals = this.state.resultRages;
+
+    vals[i] = e.target.value;
+
+    this.setState({ resultRages: vals });
+  }
+
   getInterfaceResults() {
     let vals = this.state.resultRages;
 
@@ -438,8 +447,9 @@ class Anima extends React.Component {
             className="form-range"
             min="0"
             max="100"
-            step="0.5"
-            defaultValue={vals[i]}
+            step="5"
+            value={vals[i] ? vals[i] : 0}
+            onChange={(e) => this.changeRangeValue(i, e)}
           />
         </div>
       );
