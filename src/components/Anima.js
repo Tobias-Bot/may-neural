@@ -13,6 +13,8 @@ class Anima extends React.Component {
     super(props);
     this.state = {
       resultRages: [],
+
+      showEditResults: false,
     };
 
     this.token =
@@ -21,16 +23,20 @@ class Anima extends React.Component {
     this.maxItems = 10000;
 
     this.hLen = 15;
+    this.learningRate = 0.5;
 
     this.inputs = [];
     this.outputs = [];
     this.h1 = [];
     this.h2 = [];
+
     this.wInputs = [];
     this.wHidden = [];
     this.wOutputs = [];
+
     this.wInputsOffset = 0;
     this.wHiddenOffset = 0;
+    this.wOutputsOffset = 0;
 
     this.loadProfileData = this.loadProfileData.bind(this);
     this.normalData = this.normalData.bind(this);
@@ -40,12 +46,16 @@ class Anima extends React.Component {
     this.getWeights = this.getWeights.bind(this);
     this.calculateData = this.calculateData.bind(this);
     this.getRandom = this.getRandom.bind(this);
-    this.getInterfaceResults = this.getInterfaceResults.bind(this);
+    this.getInterfaceEditResults = this.getInterfaceEditResults.bind(this);
     this.changeRangeValue = this.changeRangeValue.bind(this);
+    this.backCalculateData = this.backCalculateData.bind(this);
+    this.changeWeights = this.changeWeights.bind(this);
   }
 
   componentDidMount() {
     this.loadProfileData();
+
+    // this.setWeights();
   }
 
   loadProfileData() {
@@ -53,10 +63,10 @@ class Anima extends React.Component {
       .send("VKWebAppCallAPIMethod", {
         method: "users.get",
         params: {
-          user_ids: 386458263,
-          fields: `verified,sex,city,has_photo,has_mobile,contacts,education,status,occupation,
-          relatives,relation,personal,connections,activities,interests,
-          games,about,quotes,can_post,can_see_all_posts,can_see_audio,can_write_private_message,
+          user_ids: 306628697,
+          fields: `sex,city,has_photo,has_mobile,contacts,education,status,occupation,
+          relatives,relation,personal,connections,activities,interests,about,quotes
+          can_post,can_see_all_posts,can_see_audio,can_write_private_message,
           can_send_friend_request,screen_name,can_be_invited_group,counters`,
           v: "5.126",
           access_token: this.token,
@@ -73,9 +83,9 @@ class Anima extends React.Component {
 
     normalData[0] = profile.about && profile.about.length ? 1 : 0;
     normalData[1] = profile.bdate ? 1 : 0;
-    normalData[2] = profile.can_post;
-    normalData[3] = profile.can_write_private_message;
-    normalData[4] = profile.connections ? 1 : 0;
+    //normalData[2] = profile.can_post;
+    normalData[2] = profile.can_write_private_message;
+    //normalData[3] = profile.connections ? 1 : 0;
 
     if (profile.counters) {
       if (profile.can_see_audio && profile.counters.audio) {
@@ -87,9 +97,9 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[5] = this.normalizeData(data);
+        normalData[3] = this.normalizeData(data);
       } else {
-        normalData[5] = 0;
+        normalData[3] = 0;
       }
 
       if (profile.counters.photos) {
@@ -101,9 +111,9 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[6] = this.normalizeData(data);
+        normalData[4] = this.normalizeData(data);
       } else {
-        normalData[6] = 0;
+        normalData[4] = 0;
       }
 
       if (profile.counters.groups) {
@@ -115,9 +125,9 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[7] = this.normalizeData(data);
+        normalData[5] = this.normalizeData(data);
       } else {
-        normalData[7] = 0;
+        normalData[5] = 0;
       }
 
       if (profile.counters.friends) {
@@ -129,16 +139,16 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[8] = this.normalizeData(data);
+        normalData[6] = this.normalizeData(data);
       } else {
-        normalData[8] = 0;
+        normalData[6] = 0;
       }
     }
 
-    normalData[9] = profile.education && profile.education.university ? 1 : 0;
-    normalData[10] = profile.has_photo;
-    normalData[11] = profile.interests && profile.interests.length ? 1 : 0;
-    normalData[12] =
+    normalData[7] = profile.education && profile.education.university ? 1 : 0;
+    normalData[8] = profile.has_photo;
+    normalData[9] = profile.interests && profile.interests.length ? 1 : 0;
+    normalData[10] =
       profile.occupation &&
       profile.occupation.type &&
       profile.occupation.type.length
@@ -155,24 +165,24 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[13] = this.normalizeData(data);
+        normalData[11] = this.normalizeData(data);
       } else {
-        normalData[13] = 0;
+        normalData[11] = 0;
       }
 
-      if (profile.personal.langs) {
-        let data = {
-          X: profile.personal.langs.length,
-          Xmin: 1,
-          Xmax: 50,
-          Dmin: 0,
-          Dmax: 1,
-        };
+      // if (profile.personal.langs) {
+      //   let data = {
+      //     X: profile.personal.langs.length,
+      //     Xmin: 1,
+      //     Xmax: 50,
+      //     Dmin: 0,
+      //     Dmax: 1,
+      //   };
 
-        normalData[14] = this.normalizeData(data);
-      } else {
-        normalData[14] = 0;
-      }
+      //   normalData[12] = this.normalizeData(data);
+      // } else {
+      //   normalData[12] = 0;
+      // }
 
       if (profile.personal.people_main) {
         let data = {
@@ -183,9 +193,9 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[15] = this.normalizeData(data);
+        normalData[12] = this.normalizeData(data);
       } else {
-        normalData[15] = 0;
+        normalData[12] = 0;
       }
 
       if (profile.personal.life_main) {
@@ -197,9 +207,9 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[16] = this.normalizeData(data);
+        normalData[13] = this.normalizeData(data);
       } else {
-        normalData[16] = 0;
+        normalData[13] = 0;
       }
 
       if (profile.personal.smoking) {
@@ -211,9 +221,9 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[17] = this.normalizeData(data);
+        normalData[14] = this.normalizeData(data);
       } else {
-        normalData[17] = 0;
+        normalData[14] = 0;
       }
 
       if (profile.personal.alcohol) {
@@ -225,14 +235,16 @@ class Anima extends React.Component {
           Dmax: 1,
         };
 
-        normalData[18] = this.normalizeData(data);
+        normalData[15] = this.normalizeData(data);
       } else {
-        normalData[18] = 0;
+        normalData[15] = 0;
       }
+    } else {
+      for (let i = 11; i < 16; i++) normalData[i] = 0;
     }
 
-    normalData[19] = profile.quotes && profile.quotes.length ? 1 : 0;
-    normalData[20] = profile.relatives && profile.relatives.id ? 1 : 0;
+    normalData[16] = profile.quotes && profile.quotes.length ? 1 : 0;
+    normalData[17] = profile.relatives && profile.relatives.id ? 1 : 0;
 
     if (profile.relation) {
       let data = {
@@ -243,9 +255,9 @@ class Anima extends React.Component {
         Dmax: 1,
       };
 
-      normalData[21] = this.normalizeData(data);
+      normalData[18] = this.normalizeData(data);
     } else {
-      normalData[21] = 0;
+      normalData[18] = 0;
     }
 
     if (profile.sex) {
@@ -257,15 +269,16 @@ class Anima extends React.Component {
         Dmax: 1,
       };
 
-      normalData[22] = this.normalizeData(data);
+      normalData[19] = this.normalizeData(data);
     } else {
-      normalData[22] = 0;
+      normalData[19] = 0;
     }
 
-    normalData[23] = profile.status && profile.status.length ? 1 : 0;
-    normalData[24] = profile.verified;
+    normalData[20] = profile.status && profile.status.length ? 1 : 0;
 
     this.inputs = normalData;
+
+    console.log(this.inputs);
   }
 
   normalizeData(data) {
@@ -280,48 +293,50 @@ class Anima extends React.Component {
     return 1 / (1 + Math.exp(-x));
   }
 
-  setWeights(weights) {
+  setWeights() {
     // let inputs = [];
     // let hidden = [];
     // let outputs = [];
 
-    // let w = {
-    //   inputs: "",
-    //   hidden: "",
-    //   outputs: "",
-    // };
+    let w = {
+      i: "",
+      h: "",
+      o: "",
+    };
 
-    // let lenIn = this.inputs.length;
+    w.i = this.wInputs.map((w) => w.toFixed(2)).join(",");
+    w.h = this.wHidden.map((w) => w.toFixed(2)).join(",");
+    w.o = this.wOutputs.map((w) => w.toFixed(2)).join(",");
 
-    // let wIn = 25 * this.hLen;
+    // let wIn = 21 * this.hLen;
     // let wHid = this.hLen * this.hLen;
-    // let wOut = this.hLen * 11;
+    // let wOut = this.hLen * 9;
 
     // for (let i = 0; i < wIn; i++) {
-    //   inputs[i] = this.getRandom();
+    //   inputs[i] = this.getRandom(-1, 1);
     // }
 
-    // w.inputs = inputs.join(",");
+    // w.i = inputs.join(",");
 
     // for (let i = 0; i < wHid; i++) {
-    //   hidden[i] = this.getRandom();
+    //   hidden[i] = this.getRandom(-1, 1);
     // }
 
-    // w.hidden = hidden.join(",");
+    // w.h = hidden.join(",");
 
     // for (let i = 0; i < wOut; i++) {
-    //   outputs[i] = this.getRandom();
+    //   outputs[i] = this.getRandom(-1, 1);
     // }
 
-    // w.outputs = outputs.join(",");
+    // w.o = outputs.join(",");
 
-    // console.log(w);
+    console.log(w);
 
     bridge.send("VKWebAppCallAPIMethod", {
       method: "groups.edit",
       params: {
         group_id: this.group_id,
-        description: JSON.stringify(weights),
+        description: JSON.stringify(w),
         v: "5.126",
         access_token: this.token,
       },
@@ -342,9 +357,11 @@ class Anima extends React.Component {
       .then((r) => {
         let w = JSON.parse(r.response[0].description);
 
-        this.wInputs = w.inputs.split(",");
-        this.wHidden = w.hidden.split(",");
-        this.wOutputs = w.outputs.split(",");
+        console.log(w);
+
+        this.wInputs = w.i.split(",");
+        this.wHidden = w.h.split(",");
+        this.wOutputs = w.o.split(",");
 
         for (let i = 0; i < this.wInputs.length; i++) {
           this.wInputs[i] = parseFloat(this.wInputs[i]);
@@ -362,8 +379,8 @@ class Anima extends React.Component {
       });
   }
 
-  getRandom() {
-    return Math.random().toFixed(2);
+  getRandom(min, max) {
+    return (Math.random() * (max - min) + min).toFixed(2);
   }
 
   calculateData() {
@@ -399,6 +416,8 @@ class Anima extends React.Component {
 
     this.wHiddenOffset = 0;
 
+    let results = [];
+
     /* outputs layer */
     for (let i = 0; i < lenOut; i++) {
       for (let j = 0; j < this.hLen; j++) {
@@ -409,19 +428,99 @@ class Anima extends React.Component {
 
       let w = {
         X: this.outputs[i],
-        Xmin: 0,
+        Xmin: -1,
         Xmax: 1,
         Dmin: 0,
         Dmax: 100,
       };
 
-      this.outputs[i] = this.normalizeData(w).toFixed(2);
+      results[i] = this.normalizeData(w).toFixed(1);
 
       sum = 0;
       this.wHiddenOffset += this.hLen;
     }
 
-    this.setState({ resultRages: this.outputs });
+    this.setState({ resultRages: results });
+  }
+
+  backCalculateData() {
+    let trueResults = this.state.resultRages;
+    let lenOut = this.outputs.length;
+    let lenIn = this.inputs.length;
+
+    this.wHiddenOffset = 0;
+    this.wInputsOffset = 0;
+
+    let err = [];
+    let errH = [];
+    let errI = [];
+
+    let errSumH2 = [];
+    let errSumH1 = [];
+
+    for (let i = 0; i < this.hLen; i++) {
+      errSumH1[i] = 0;
+      errSumH2[i] = 0;
+    }
+
+    /* output layer */
+    for (let i = 0; i < lenOut; i++) {
+      let w = {
+        X: trueResults[i],
+        Xmin: 0,
+        Xmax: 100,
+        Dmin: -1,
+        Dmax: 1,
+      };
+
+      err[i] =
+        (this.outputs[i] - this.normalizeData(w)) *
+        this.outputs[i] *
+        (1 - this.outputs[i]);
+
+      for (let j = 0; j < this.hLen; j++) {
+        let dW = this.learningRate * err[i] * this.h2[j];
+
+        this.wOutputs[j + this.wOutputsOffset] =
+          this.wOutputs[j + this.wOutputsOffset] + dW;
+
+        errSumH2[j] += err[i] * this.wOutputs[j + this.wOutputsOffset];
+      }
+
+      this.wOutputsOffset += this.hLen;
+    }
+
+    /* hidden layers */
+    for (let i = 0; i < this.hLen; i++) {
+      errH[i] = errSumH2[i] * this.h2[i] * (1 - this.h2[i]);
+
+      for (let j = 0; j < this.hLen; j++) {
+        let dW = this.learningRate * errH[i] * this.h1[j];
+
+        this.wHidden[j + this.wHiddenOffset] =
+          this.wHidden[j + this.wHiddenOffset] + dW;
+
+        errSumH1[j] += errH[i] * this.wHidden[j + this.wHiddenOffset];
+      }
+
+      this.wHiddenOffset += this.hLen;
+    }
+
+    /* input layer */
+    for (let i = 0; i < this.hLen; i++) {
+      errI[i] = errSumH1[i] * this.h1[i] * (1 - this.h1[i]);
+
+      for (let j = 0; j < lenIn; j++) {
+        let dW = this.learningRate * errI[i] * this.inputs[j];
+
+        this.wInputs[j + this.wInputsOffset] =
+          this.wInputs[j + this.wInputsOffset] + dW;
+      }
+
+      this.wInputsOffset += this.hLen;
+    }
+
+    this.setWeights();
   }
 
   changeRangeValue(i, e) {
@@ -432,7 +531,7 @@ class Anima extends React.Component {
     this.setState({ resultRages: vals });
   }
 
-  getInterfaceResults() {
+  getInterfaceEditResults() {
     let vals = this.state.resultRages;
 
     let ranges = features.map((feature, i) => {
@@ -458,10 +557,69 @@ class Anima extends React.Component {
     return ranges;
   }
 
-  render() {
-    let results = this.getInterfaceResults();
+  getInterfaceResults() {
+    let vals = this.state.resultRages;
 
-    return <div className="cover">{results}</div>;
+    let ranges = features.map((feature, i) => {
+      return (
+        <div key={feature.color + i} className="rangePost">
+          <div className="rangeTitle">
+            {feature.title + " (" + vals[i] + ")"}
+          </div>
+          <div className="question">{feature.text}</div>
+          <div className="progress">
+            <div
+              className="progress-bar"
+              style={{ width: vals[i] + "%", backgroundColor: feature.color }}
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+        </div>
+      );
+    });
+
+    return ranges;
+  }
+
+  changeWeights() {
+    let show = this.state.showEditResults;
+    this.setState({ showEditResults: !show });
+
+    this.backCalculateData();
+  }
+
+  render() {
+    let show = this.state.showEditResults;
+    let results = show
+      ? this.getInterfaceEditResults()
+      : this.getInterfaceResults();
+
+    return (
+      <div>
+        <div className="infoText">Результаты анализа</div>
+        <div className="cover">
+          {!show ? (
+            <div
+              className="btnEdit"
+              onClick={() => this.setState({ showEditResults: !show })}
+            >
+              <i className="far fa-edit"></i> редактировать
+            </div>
+          ) : (
+            <div
+              className="btnEdit"
+              style={{ backgroundColor: "#1F1F33", color: "#D0D0FF" }}
+              onClick={this.changeWeights}
+            >
+              сохранить
+            </div>
+          )}
+          {results}
+        </div>
+      </div>
+    );
   }
 }
 

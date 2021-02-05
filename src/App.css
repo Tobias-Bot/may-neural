@@ -55,22 +55,23 @@
   background-color: rgb(25, 25, 34);
 }
 
-.btnInfo {
-  position: relative;
+.btnEdit {
+  position: absolute;
   display: inline-block;
-  height: 35px;
+  top: 5px;
+  right: 3px;
   text-align: center;
   font-size: 16px;
   font-weight: 500;
-  margin: 7px 6px 0px 6px;
-  padding: 4px 12px 0px 12px;
+  margin: 5px 6px 10px 6px;
+  padding: 4px 12px;
   color: rgb(37, 37, 51);
   background-color: white;
-  border-radius: 100px;
-  box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.5);
-  transition: 0.2s all;
+  border-radius: 10px;
+  box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.2);
+  transition: 0.1s all;
 }
-.btnInfo:hover {
+.btnEdit:hover {
   cursor: pointer;
 }
 
@@ -116,7 +117,7 @@
   overflow-x: hidden;
   overflow-y: scroll;
   background-color: rgb(31, 31, 51);
-  padding: 25px 10px 25px 10px;
+  padding: 5px 10px 25px 10px;
 }
 
 .copyrightText {
@@ -130,87 +131,6 @@
   opacity: 0.3;
 }
 
-.topicFooter {
-  position: fixed;
-  bottom: 0px;
-  padding: 10px 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  border-radius: 100px 100px 0 0;
-  border-top: 3px solid white;
-  text-align: center;
-  background-color: rgb(25, 25, 34);
-  transition: 0.5s all;
-}
-
-.postBtn {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  padding: 5px;
-  margin: 0px 10px;
-  font-size: 25px;
-  background-color: rgb(31, 31, 51);
-  color: rgb(37, 37, 51);
-  text-align: center;
-  border-radius: 100px;
-  border: 2px solid white;
-  box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.8);
-}
-
-.inputText {
-  position: relative;
-  width: 100%;
-  padding: 5px 10px;
-  margin: 5px 0;
-  border-radius: 3px 20px 3px 20px;
-  font-size: 15px;
-  font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  color: rgb(37, 37, 51);
-  border: none;
-  outline: none;
-  resize: none;
-}
-
-.inputStr {
-  position: relative;
-  width: 100%;
-  margin: 8px 0;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  color: rgb(37, 37, 51);
-  border: none;
-  outline: none;
-}
-
-.inputTitle {
-  position: relative;
-  width: 100%;
-  margin: 20px 0 5px 0;
-  color: rgba(0, 0, 0, 0.8);
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.submitBtn {
-  position: relative;
-  display: inline;
-  padding: 5px 10px;
-  font-size: 18px;
-  font-weight: 500;
-  color: white;
-  background-color: rgb(37, 37, 51);
-  border-radius: 10px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
-}
-
 .infoText {
   position: relative;
   width: 100%;
@@ -221,21 +141,7 @@
   font-size: 16px;
   font-weight: 500;
   color: #b9bfff;
-  opacity: 0.6;
-}
-
-.shareTopicBtn {
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 1px 8px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 5px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  color: rgb(37, 37, 51);
+  opacity: 0.7;
 }
 
 .Loading {
@@ -287,4 +193,9 @@
   font-size: 12px;
   padding: 3px;
   border-radius: 30px;
+}
+
+.progress {
+  margin-top: 10px;
+  height: 18px;
 }
