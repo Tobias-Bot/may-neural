@@ -23,7 +23,7 @@ class Anima extends React.Component {
     this.maxItems = 10000;
 
     this.hLen = 15;
-    this.learningRate = 0.5;
+    this.learningRate = 0.005;
 
     this.inputs = [];
     this.outputs = [];
@@ -63,7 +63,7 @@ class Anima extends React.Component {
       .send("VKWebAppCallAPIMethod", {
         method: "users.get",
         params: {
-          user_ids: 306628697,
+          user_ids: this.props.user_id,
           fields: `sex,city,has_photo,has_mobile,contacts,education,status,occupation,
           relatives,relation,personal,connections,activities,interests,about,quotes
           can_post,can_see_all_posts,can_see_audio,can_write_private_message,
@@ -310,7 +310,7 @@ class Anima extends React.Component {
 
     // let wIn = 21 * this.hLen;
     // let wHid = this.hLen * this.hLen;
-    // let wOut = this.hLen * 9;
+    // let wOut = this.hLen * 8;
 
     // for (let i = 0; i < wIn; i++) {
     //   inputs[i] = this.getRandom(-1, 1);
