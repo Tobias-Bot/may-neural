@@ -59,11 +59,12 @@ class Anima extends React.Component {
   }
 
   loadProfileData() {
+    console.log(this.props.userId);
     bridge
       .send("VKWebAppCallAPIMethod", {
         method: "users.get",
         params: {
-          user_ids: this.props.user_id,
+          user_ids: this.props.userId,
           fields: `sex,city,has_photo,has_mobile,contacts,education,status,occupation,
           relatives,relation,personal,connections,activities,interests,about,quotes
           can_post,can_see_all_posts,can_see_audio,can_write_private_message,
@@ -73,6 +74,7 @@ class Anima extends React.Component {
         },
       })
       .then((r) => {
+        console.log(r.response[0]);
         this.normalData(r.response[0]);
         this.getWeights();
       });
@@ -83,9 +85,7 @@ class Anima extends React.Component {
 
     normalData[0] = profile.about && profile.about.length ? 1 : 0;
     normalData[1] = profile.bdate ? 1 : 0;
-    //normalData[2] = profile.can_post;
     normalData[2] = profile.can_write_private_message;
-    //normalData[3] = profile.connections ? 1 : 0;
 
     if (profile.counters) {
       if (profile.can_see_audio && profile.counters.audio) {
@@ -243,9 +243,6 @@ class Anima extends React.Component {
       for (let i = 11; i < 16; i++) normalData[i] = 0;
     }
 
-    normalData[16] = profile.quotes && profile.quotes.length ? 1 : 0;
-    normalData[17] = profile.relatives && profile.relatives.id ? 1 : 0;
-
     if (profile.relation) {
       let data = {
         X: profile.relation,
@@ -255,9 +252,9 @@ class Anima extends React.Component {
         Dmax: 1,
       };
 
-      normalData[18] = this.normalizeData(data);
+      normalData[16] = this.normalizeData(data);
     } else {
-      normalData[18] = 0;
+      normalData[16] = 0;
     }
 
     if (profile.sex) {
@@ -269,12 +266,12 @@ class Anima extends React.Component {
         Dmax: 1,
       };
 
-      normalData[19] = this.normalizeData(data);
+      normalData[17] = this.normalizeData(data);
     } else {
-      normalData[19] = 0;
+      normalData[17] = 0;
     }
 
-    normalData[20] = profile.status && profile.status.length ? 1 : 0;
+    normalData[18] = profile.status && profile.status.length ? 1 : 0;
 
     this.inputs = normalData;
 
@@ -290,7 +287,7 @@ class Anima extends React.Component {
   }
 
   activateFun(x) {
-    return 1 / (1 + Math.exp(-x));
+    return (Math.exp(2 * x) - 1) / (Math.exp(2 * x) + 1);
   }
 
   setWeights() {

@@ -5,9 +5,9 @@ import { Route, HashRouter, Switch, NavLink } from "react-router-dom";
 // import Transition from "react-transition-group/Transition";
 
 import Anima from "./Anima";
+import FriendProfile from "./FriendProfile";
 
 import "../App.css";
-import "../styles/Friends.css";
 
 class Main extends React.Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class Main extends React.Component {
       friends: [],
 
       friendsLoad: true,
+      friendId: "",
     };
 
     this.friendId = "";
@@ -24,6 +25,7 @@ class Main extends React.Component {
     this.getHeaderStyle = this.getHeaderStyle.bind(this);
     this.openMainApp = this.openMainApp.bind(this);
     this.getFriends = this.getFriends.bind(this);
+    this.setUserId = this.setUserId.bind(this);
   }
 
   getHeaderStyle() {
@@ -54,6 +56,10 @@ class Main extends React.Component {
     bridge.send("VKWebAppOpenApp", { app_id: 7646928 });
   }
 
+  setUserId(id) {
+    this.setState({ friendId: id });
+  }
+
   getFriends() {
     this.setState({ friendsLoad: true });
 
@@ -82,15 +88,14 @@ class Main extends React.Component {
 
             items = r.response.items.map((friend) => {
               return !friend.deactivated ? (
-                <div className="profile" key={friend.id}>
-                  <img
-                    className="profilePhoto"
-                    src={friend.photo_50}
-                    alt="avatar"
-                  />
-                  <br />
-                  <div className="profileName">{friend.first_name}</div>
-                </div>
+                <FriendProfile
+                  key={friend.id}
+                  id={friend.id}
+                  online={friend.online}
+                  src={friend.photo_50}
+                  name={friend.first_name}
+                  onIconClick={this.setUserId}
+                />
               ) : (
                 ""
               );
@@ -138,9 +143,13 @@ class Main extends React.Component {
                 {friends}
               </div>
               <div className="modal-footer">
-                <div className="mainBtn" data-dismiss="modal">
-                  <i className="fas fa-puzzle-piece"></i> провести анализ
-                </div>
+                <HashRouter>
+                  <NavLink className="linkStyle" to="/anima">
+                    <div className="mainBtn">
+                      <i className="fas fa-puzzle-piece"></i> провести анализ
+                    </div>
+                  </NavLink>
+                </HashRouter>
               </div>
             </div>
           </div>
@@ -190,7 +199,7 @@ class Main extends React.Component {
                 </div>
               </Route>
               <Route exact path="/anima">
-                <Anima user_id={this.friendId} />
+                <Anima userId={this.state.friendId} />
               </Route>
             </Switch>
           </HashRouter>
