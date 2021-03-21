@@ -1,6 +1,7 @@
 .cover {
   position: relative;
   width: 100%;
+  margin: 15px 0px;
   padding: 35px 10px;
   background-color: white;
   border-radius: 10px;

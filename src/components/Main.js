@@ -16,16 +16,22 @@ class Main extends React.Component {
       headerStyles: {},
       friends: [],
 
-      friendsLoad: true,
-      friendId: "",
-    };
+      token: "",
 
-    this.friendId = "";
+      friendsLoad: true,
+      friendId: 0,
+      myId: 0,
+    };
 
     this.getHeaderStyle = this.getHeaderStyle.bind(this);
     this.openMainApp = this.openMainApp.bind(this);
     this.getFriends = this.getFriends.bind(this);
     this.setUserId = this.setUserId.bind(this);
+    this.getUserInfo = this.getUserInfo.bind(this);
+  }
+
+  componentDidMount() {
+    this.getUserInfo();
   }
 
   getHeaderStyle() {
@@ -66,7 +72,7 @@ class Main extends React.Component {
     bridge
       .send("VKWebAppGetAuthToken", {
         app_id: 7706189,
-        scope: "friends",
+        scope: "friends,groups",
       })
       .then((r) => {
         let token = r.access_token;
@@ -86,24 +92,33 @@ class Main extends React.Component {
           .then((r) => {
             let items = [];
 
-            items = r.response.items.map((friend) => {
+            items = r.response.items.map((friend, i) => {
               return !friend.deactivated ? (
-                <FriendProfile
-                  key={friend.id}
-                  id={friend.id}
-                  online={friend.online}
-                  src={friend.photo_50}
-                  name={friend.first_name}
-                  onIconClick={this.setUserId}
-                />
+                <div className="row" key={friend.id}>
+                  <div className="col">
+                    <FriendProfile
+                      id={friend.id}
+                      online={friend.online}
+                      src={friend.photo_50}
+                      name={friend.first_name}
+                      onIconClick={this.setUserId}
+                    />
+                  </div>
+                </div>
               ) : (
                 ""
               );
             });
 
-            this.setState({ friends: items, friendsLoad: false });
+            this.setState({ friends: items, friendsLoad: false, token });
           });
       });
+  }
+
+  getUserInfo() {
+    bridge.send("VKWebAppGetUserInfo").then((r) => {
+      this.setState({ myId: r.id });
+    });
   }
 
   render() {
@@ -178,12 +193,15 @@ class Main extends React.Component {
           <HashRouter>
             <Switch>
               <Route exact path="/">
+                <div className="infoText">Привет!</div>
                 <div className="row mt-4 mb-2 pl-2 pr-2">
                   <div className="col">
-                    <div className="icon">
-                      <i className="fas fa-share-square"></i>
-                      <span className="iconTitle">мой профиль</span>
-                    </div>
+                    <NavLink className="linkStyle" to="/anima">
+                      <div className="icon">
+                        <i className="fas fa-share-square"></i>
+                        <span className="iconTitle">мой профиль</span>
+                      </div>
+                    </NavLink>
                   </div>
                   <div className="col">
                     <div
@@ -199,7 +217,11 @@ class Main extends React.Component {
                 </div>
               </Route>
               <Route exact path="/anima">
-                <Anima userId={this.state.friendId} />
+                <Anima
+                  userId={this.state.friendId}
+                  myId={this.state.myId}
+                  token={this.state.token}
+                />
               </Route>
             </Switch>
           </HashRouter>

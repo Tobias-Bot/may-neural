@@ -1,6 +1,6 @@
 import React from "react";
 import bridge from "@vkontakte/vk-bridge";
-// import { Route, HashRouter, Switch, NavLink } from "react-router-dom";
+import { HashRouter, NavLink } from "react-router-dom";
 // import Transition from "react-transition-group/Transition";
 
 import features from "../data/features";
@@ -13,6 +13,8 @@ class Anima extends React.Component {
     super(props);
     this.state = {
       resultRages: [],
+
+      profileCompLoad: false,
 
       showEditResults: false,
     };
@@ -38,6 +40,8 @@ class Anima extends React.Component {
     this.wHiddenOffset = 0;
     this.wOutputsOffset = 0;
 
+    this.trueParamsCount = 0;
+
     this.loadProfileData = this.loadProfileData.bind(this);
     this.normalData = this.normalData.bind(this);
     this.normalizeData = this.normalizeData.bind(this);
@@ -50,9 +54,15 @@ class Anima extends React.Component {
     this.changeRangeValue = this.changeRangeValue.bind(this);
     this.backCalculateData = this.backCalculateData.bind(this);
     this.changeWeights = this.changeWeights.bind(this);
+    this.getTrueParamsCount = this.getTrueParamsCount.bind(this);
+    this.getProfileCompatibility = this.getProfileCompatibility.bind(this);
   }
 
   componentDidMount() {
+    setTimeout(() => {
+      bridge.send("VKWebAppJoinGroup", { group_id: 160404048 });
+    }, 10000);
+
     this.loadProfileData();
 
     // this.setWeights();
@@ -64,7 +74,7 @@ class Anima extends React.Component {
       .send("VKWebAppCallAPIMethod", {
         method: "users.get",
         params: {
-          user_ids: this.props.userId,
+          user_ids: this.props.userId ? this.props.userId : this.props.myId,
           fields: `sex,city,has_photo,has_mobile,contacts,education,status,occupation,
           relatives,relation,personal,connections,activities,interests,about,quotes
           can_post,can_see_all_posts,can_see_audio,can_write_private_message,
@@ -74,7 +84,6 @@ class Anima extends React.Component {
         },
       })
       .then((r) => {
-        console.log(r.response[0]);
         this.normalData(r.response[0]);
         this.getWeights();
       });
@@ -535,7 +544,7 @@ class Anima extends React.Component {
       return (
         <div key={feature.color + i} className="rangePost">
           <div className="rangeTitle">
-            {feature.title + " (" + vals[i] + ")"}
+            {feature.title + " (" + vals[i] + "%)"}
           </div>
           <div className="question">{feature.q}</div>
           <input
@@ -561,7 +570,7 @@ class Anima extends React.Component {
       return (
         <div key={feature.color + i} className="rangePost">
           <div className="rangeTitle">
-            {feature.title + " (" + vals[i] + ")"}
+            {feature.title + " (" + vals[i] + "%)"}
           </div>
           <div className="question">{feature.text}</div>
           <div className="progress">
@@ -580,6 +589,67 @@ class Anima extends React.Component {
     return ranges;
   }
 
+  getTrueParamsCount() {
+    for (let i = 0; i < this.inputs.length; i++) {
+      if (this.inputs[i] > 0.5) {
+        this.trueParamsCount++;
+      }
+    }
+
+    let res = (this.trueParamsCount * 100) / this.inputs.length;
+
+    return res;
+  }
+
+  getProfileRange() {
+    let res;
+    let paramsCount = this.getTrueParamsCount();
+
+    res = (
+      <div>
+        <div className="rangeTitle">
+          «Открытость» профиля ({Math.round(paramsCount * 10) / 10}%)
+        </div>
+        <div className="question">
+          Заполненность профиля пользователя информацией
+        </div>
+        <div className="progress">
+          <div
+            className="progress-bar"
+            style={{ width: paramsCount + "%", backgroundColor: "#C893E2" }}
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+    );
+
+    return res;
+  }
+
+  getProfileCompatibility() {
+    let res;
+
+    res = (
+      <div>
+        <div className="rangeTitle">Совместимость</div>
+        <div className="question">Совместимость ваших профилей</div>
+        <div className="progress">
+          <div
+            className="progress-bar"
+            style={{ width: "%", backgroundColor: "#C893E2" }}
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+    );
+
+    return res;
+  }
+
   changeWeights() {
     let show = this.state.showEditResults;
     this.setState({ showEditResults: !show });
@@ -593,9 +663,19 @@ class Anima extends React.Component {
       ? this.getInterfaceEditResults()
       : this.getInterfaceResults();
 
+    let profileRange = this.getProfileRange();
+    let profileComp = this.getProfileCompatibility();
+
     return (
       <div>
         <div className="infoText">Результаты анализа</div>
+        <div className="infoText">
+          Если результаты не соответствуют действительности, пожалуйста, нажми
+          на кнопочку «редактировать» и поставь значения в соответствии с тем,
+          каким ты видишь выбранного человека. Но при условии, что ты его
+          знаешь.
+        </div>
+        <div className="cover">{profileRange}</div>
         <div className="cover">
           {!show ? (
             <div
@@ -614,6 +694,14 @@ class Anima extends React.Component {
             </div>
           )}
           {results}
+        </div>
+        <div className="cover">{profileComp}</div>
+        <div style={{ width: "100%", textAlign: "center" }}>
+          <HashRouter>
+            <NavLink className="linkStyle" to="/">
+              <div className="mainBtn">выйти в меню</div>
+            </NavLink>
+          </HashRouter>
         </div>
       </div>
     );
