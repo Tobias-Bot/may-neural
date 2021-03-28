@@ -42,6 +42,8 @@ class Anima extends React.Component {
 
     this.trueParamsCount = 0;
 
+    this.profileRange = "";
+
     this.loadProfileData = this.loadProfileData.bind(this);
     this.normalData = this.normalData.bind(this);
     this.normalizeData = this.normalizeData.bind(this);
@@ -59,6 +61,11 @@ class Anima extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.userId) {
+      let modal = document.getElementById("closeModal");
+      modal.click();
+    }
+
     setTimeout(() => {
       bridge.send("VKWebAppJoinGroup", { group_id: 160404048 });
     }, 10000);
@@ -69,7 +76,6 @@ class Anima extends React.Component {
   }
 
   loadProfileData() {
-    console.log(this.props.userId);
     bridge
       .send("VKWebAppCallAPIMethod", {
         method: "users.get",
@@ -283,6 +289,8 @@ class Anima extends React.Component {
     normalData[18] = profile.status && profile.status.length ? 1 : 0;
 
     this.inputs = normalData;
+
+    this.profileRange = this.getProfileRange();
 
     console.log(this.inputs);
   }
@@ -663,8 +671,7 @@ class Anima extends React.Component {
       ? this.getInterfaceEditResults()
       : this.getInterfaceResults();
 
-    let profileRange = this.getProfileRange();
-    let profileComp = this.getProfileCompatibility();
+    // let profileComp = this.getProfileCompatibility();
 
     return (
       <div>
@@ -675,7 +682,7 @@ class Anima extends React.Component {
           каким ты видишь выбранного человека. Но при условии, что ты его
           знаешь.
         </div>
-        <div className="cover">{profileRange}</div>
+        <div className="cover">{this.profileRange}</div>
         <div className="cover">
           {!show ? (
             <div
@@ -695,7 +702,7 @@ class Anima extends React.Component {
           )}
           {results}
         </div>
-        <div className="cover">{profileComp}</div>
+        {/* <div className="cover">{profileComp}</div> */}
         <div style={{ width: "100%", textAlign: "center" }}>
           <HashRouter>
             <NavLink className="linkStyle" to="/">

@@ -143,6 +143,7 @@ class Main extends React.Component {
                 <h5 className="modal-title">Выбрать профиль</h5>
                 <button
                   type="button"
+                  id="closeModal"
                   className="close"
                   data-dismiss="modal"
                   aria-label="Close"
