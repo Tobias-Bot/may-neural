@@ -63,8 +63,6 @@ class Anima extends React.Component {
   }
 
   componentDidMount() {
-    this.getUsersGrops();
-
     if (this.props.userId) {
       let modal = document.getElementById("closeModal");
       modal.click();
