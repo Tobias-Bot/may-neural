@@ -28,6 +28,7 @@ class Main extends React.Component {
     this.getFriends = this.getFriends.bind(this);
     this.setUserId = this.setUserId.bind(this);
     this.getUserInfo = this.getUserInfo.bind(this);
+    this.delUserId = this.delUserId.bind(this);
   }
 
   componentDidMount() {
@@ -71,7 +72,7 @@ class Main extends React.Component {
 
     bridge
       .send("VKWebAppGetAuthToken", {
-        app_id: 7706189,
+        app_id: 7807196,
         scope: "friends,groups",
       })
       .then((r) => {
@@ -92,19 +93,16 @@ class Main extends React.Component {
           .then((r) => {
             let items = [];
 
-            items = r.response.items.map((friend, i) => {
+            items = r.response.items.map((friend) => {
               return !friend.deactivated ? (
-                <div className="row" key={friend.id}>
-                  <div className="col">
-                    <FriendProfile
-                      id={friend.id}
-                      online={friend.online}
-                      src={friend.photo_50}
-                      name={friend.first_name}
-                      onIconClick={this.setUserId}
-                    />
-                  </div>
-                </div>
+                <FriendProfile
+                  key={friend.id}
+                  id={friend.id}
+                  online={friend.online}
+                  src={friend.photo_50}
+                  name={friend.first_name}
+                  onIconClick={this.setUserId}
+                />
               ) : (
                 ""
               );
@@ -119,6 +117,10 @@ class Main extends React.Component {
     bridge.send("VKWebAppGetUserInfo").then((r) => {
       this.setState({ myId: r.id });
     });
+  }
+
+  delUserId() {
+    this.setState({ friendId: "" });
   }
 
   render() {
@@ -158,15 +160,6 @@ class Main extends React.Component {
                 </div>
                 {friends}
               </div>
-              <div className="modal-footer">
-                <HashRouter>
-                  <NavLink className="linkStyle" to="/anima">
-                    <div className="mainBtn">
-                      <i className="fas fa-puzzle-piece"></i> провести анализ
-                    </div>
-                  </NavLink>
-                </HashRouter>
-              </div>
             </div>
           </div>
         </div>
@@ -195,24 +188,33 @@ class Main extends React.Component {
             <Switch>
               <Route exact path="/">
                 <div className="infoText">Привет!</div>
-                <div className="row mt-4 mb-2 pl-2 pr-2">
-                  <div className="col">
-                    <NavLink className="linkStyle" to="/anima">
-                      <div className="icon">
-                        <i className="fas fa-share-square"></i>
-                        <span className="iconTitle">мой профиль</span>
+                <div className="infoText">
+                  Это приложение поможет тебе получить психологический портрет
+                  пользователя по его профилю. В приложение встроена нейронная
+                  сеть, которая и анализирует профили. Ты можешь обучать сеть,
+                  чтобы результаты анализа были точнее. Попробуй!
+                </div>
+                <div className="btnsTitle">анализ</div>
+                <div className="btnsBackground">
+                  <div className="row mb-4">
+                    <div className="col">
+                      <NavLink className="linkStyle" to="/anima">
+                        <div className="icon">
+                          <i className="fas fa-user"></i>
+                          <span className="iconTitle">мой профиль</span>
+                        </div>
+                      </NavLink>
+                    </div>
+                    <div className="col">
+                      <div
+                        className="icon"
+                        data-toggle="modal"
+                        data-target="#friendsModal"
+                        onClick={this.getFriends}
+                      >
+                        <i className="fas fa-user-friends"></i>
+                        <span className="iconTitle">профиль друга</span>
                       </div>
-                    </NavLink>
-                  </div>
-                  <div className="col">
-                    <div
-                      className="icon"
-                      data-toggle="modal"
-                      data-target="#friendsModal"
-                      onClick={this.getFriends}
-                    >
-                      <i className="fas fa-user-friends"></i>
-                      <span className="iconTitle">профиль друга</span>
                     </div>
                   </div>
                 </div>
@@ -222,11 +224,17 @@ class Main extends React.Component {
                   userId={this.state.friendId}
                   myId={this.state.myId}
                   token={this.state.token}
+                  resetUserId={this.delUserId}
                 />
               </Route>
             </Switch>
           </HashRouter>
-          <a href="https://vk.com/warmay" className="linkStyle">
+          <a
+            href="https://vk.com/warmay"
+            className="linkStyle"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div className="copyrightText">Май</div>
           </a>
         </div>

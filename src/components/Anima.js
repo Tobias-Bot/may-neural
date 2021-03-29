@@ -14,7 +14,7 @@ class Anima extends React.Component {
     this.state = {
       resultRages: [],
 
-      profileCompLoad: false,
+      profileComp: 0,
 
       showEditResults: false,
     };
@@ -25,12 +25,14 @@ class Anima extends React.Component {
     this.maxItems = 10000;
 
     this.hLen = 15;
-    this.learningRate = 0.005;
+    this.learningRate = 0.0035;
 
     this.inputs = [];
     this.outputs = [];
     this.h1 = [];
     this.h2 = [];
+
+    this.myInputs = [];
 
     this.wInputs = [];
     this.wHidden = [];
@@ -61,18 +63,52 @@ class Anima extends React.Component {
   }
 
   componentDidMount() {
+    this.getUsersGrops();
+
     if (this.props.userId) {
       let modal = document.getElementById("closeModal");
       modal.click();
+    }
+
+    if (this.props.userId) {
+      bridge
+        .send("VKWebAppCallAPIMethod", {
+          method: "users.get",
+          params: {
+            user_ids: this.props.myId,
+            fields: `sex,city,has_photo,has_mobile,contacts,education,status,occupation,
+          relatives,relation,personal,connections,activities,interests,about,quotes
+          can_post,can_see_all_posts,can_see_audio,can_write_private_message,
+          can_send_friend_request,screen_name,can_be_invited_group,counters`,
+            v: "5.126",
+            access_token: this.token,
+          },
+        })
+        .then((r) => {
+          this.normalData(r.response[0]);
+
+          let len = this.inputs.length;
+
+          for (let i = 0; i < len; i++) {
+            this.myInputs[i] = this.inputs[i];
+          }
+
+          this.loadProfileData();
+        });
+    } else {
+      this.setState({ profileComp: 0 });
+      this.loadProfileData();
     }
 
     setTimeout(() => {
       bridge.send("VKWebAppJoinGroup", { group_id: 160404048 });
     }, 10000);
 
-    this.loadProfileData();
-
     // this.setWeights();
+  }
+
+  componentWillUnmount() {
+    this.props.resetUserId();
   }
 
   loadProfileData() {
@@ -91,6 +127,24 @@ class Anima extends React.Component {
       })
       .then((r) => {
         this.normalData(r.response[0]);
+
+        let sum = 0;
+        let err = 0.2;
+        let len = this.inputs.length;
+
+        for (let i = 0; i < len; i++) {
+          if (
+            this.myInputs[i] === this.inputs[i] ||
+            Math.abs(this.myInputs[i] - this.inputs[i]) < err
+          ) {
+            sum++;
+          }
+        }
+
+        let res = (sum * 100) / len;
+
+        this.setState({ profileComp: res });
+
         this.getWeights();
       });
   }
@@ -291,8 +345,6 @@ class Anima extends React.Component {
     this.inputs = normalData;
 
     this.profileRange = this.getProfileRange();
-
-    console.log(this.inputs);
   }
 
   normalizeData(data) {
@@ -343,8 +395,6 @@ class Anima extends React.Component {
     // }
 
     // w.o = outputs.join(",");
-
-    console.log(w);
 
     bridge.send("VKWebAppCallAPIMethod", {
       method: "groups.edit",
@@ -638,15 +688,19 @@ class Anima extends React.Component {
 
   getProfileCompatibility() {
     let res;
+    let val = Math.round(this.state.profileComp * 100) / 100;
 
     res = (
       <div>
-        <div className="rangeTitle">Совместимость</div>
+        <div className="rangeTitle">Совместимость ({val}%)</div>
         <div className="question">Совместимость ваших профилей</div>
         <div className="progress">
           <div
             className="progress-bar"
-            style={{ width: "%", backgroundColor: "#C893E2" }}
+            style={{
+              width: val + "%",
+              backgroundColor: "#C893E2",
+            }}
             role="progressbar"
             aria-valuemin="0"
             aria-valuemax="100"
@@ -671,7 +725,7 @@ class Anima extends React.Component {
       ? this.getInterfaceEditResults()
       : this.getInterfaceResults();
 
-    // let profileComp = this.getProfileCompatibility();
+    let profileComp = this.getProfileCompatibility();
 
     return (
       <div>
@@ -702,7 +756,11 @@ class Anima extends React.Component {
           )}
           {results}
         </div>
-        {/* <div className="cover">{profileComp}</div> */}
+        {this.state.profileComp ? (
+          <div className="cover">{profileComp}</div>
+        ) : (
+          ""
+        )}
         <div style={{ width: "100%", textAlign: "center" }}>
           <HashRouter>
             <NavLink className="linkStyle" to="/">
