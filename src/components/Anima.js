@@ -25,7 +25,7 @@ class Anima extends React.Component {
     this.maxItems = 10000;
 
     this.hLen = 15;
-    this.learningRate = 0.0035;
+    this.learningRate = 0.002;
 
     this.inputs = [];
     this.outputs = [];
@@ -236,20 +236,6 @@ class Anima extends React.Component {
       } else {
         normalData[11] = 0;
       }
-
-      // if (profile.personal.langs) {
-      //   let data = {
-      //     X: profile.personal.langs.length,
-      //     Xmin: 1,
-      //     Xmax: 50,
-      //     Dmin: 0,
-      //     Dmax: 1,
-      //   };
-
-      //   normalData[12] = this.normalizeData(data);
-      // } else {
-      //   normalData[12] = 0;
-      // }
 
       if (profile.personal.people_main) {
         let data = {
