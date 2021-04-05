@@ -25,7 +25,7 @@ class Anima extends React.Component {
     this.maxItems = 10000;
 
     this.hLen = 15;
-    this.learningRate = 0.002;
+    this.learningRate = 0.004;
 
     this.inputs = [];
     this.outputs = [];
@@ -379,7 +379,7 @@ class Anima extends React.Component {
       w.h = this.wHidden.map((w) => w.toFixed(2)).join(",");
       w.o = this.wOutputs.map((w) => w.toFixed(2)).join(",");
 
-      // let wIn = 21 * this.hLen;
+      // let wIn = 19 * this.hLen;
       // let wHid = this.hLen * this.hLen;
       // let wOut = this.hLen * 8;
 
