@@ -344,51 +344,73 @@ class Anima extends React.Component {
   }
 
   setWeights() {
-    // let inputs = [];
-    // let hidden = [];
-    // let outputs = [];
+    let permission = true;
 
-    let w = {
-      i: "",
-      h: "",
-      o: "",
-    };
+    for (let i = 0; i < this.wInputs.length; i++) {
+      if (Number.isNaN(this.wInputs[i])) {
+        permission = false;
+      }
+    }
 
-    w.i = this.wInputs.map((w) => w.toFixed(2)).join(",");
-    w.h = this.wHidden.map((w) => w.toFixed(2)).join(",");
-    w.o = this.wOutputs.map((w) => w.toFixed(2)).join(",");
+    for (let i = 0; i < this.wHidden.length; i++) {
+      if (Number.isNaN(this.wHidden[i])) {
+        permission = false;
+      }
+    }
 
-    // let wIn = 21 * this.hLen;
-    // let wHid = this.hLen * this.hLen;
-    // let wOut = this.hLen * 8;
+    for (let i = 0; i < this.wOutputs.length; i++) {
+      if (Number.isNaN(this.wOutputs[i])) {
+        permission = false;
+      }
+    }
 
-    // for (let i = 0; i < wIn; i++) {
-    //   inputs[i] = this.getRandom(-1, 1);
-    // }
+    if (permission) {
+      // let inputs = [];
+      // let hidden = [];
+      // let outputs = [];
 
-    // w.i = inputs.join(",");
+      let w = {
+        i: "",
+        h: "",
+        o: "",
+      };
 
-    // for (let i = 0; i < wHid; i++) {
-    //   hidden[i] = this.getRandom(-1, 1);
-    // }
+      w.i = this.wInputs.map((w) => w.toFixed(2)).join(",");
+      w.h = this.wHidden.map((w) => w.toFixed(2)).join(",");
+      w.o = this.wOutputs.map((w) => w.toFixed(2)).join(",");
 
-    // w.h = hidden.join(",");
+      // let wIn = 21 * this.hLen;
+      // let wHid = this.hLen * this.hLen;
+      // let wOut = this.hLen * 8;
 
-    // for (let i = 0; i < wOut; i++) {
-    //   outputs[i] = this.getRandom(-1, 1);
-    // }
+      // for (let i = 0; i < wIn; i++) {
+      //   inputs[i] = this.getRandom(-1, 1);
+      // }
 
-    // w.o = outputs.join(",");
+      // w.i = inputs.join(",");
 
-    bridge.send("VKWebAppCallAPIMethod", {
-      method: "groups.edit",
-      params: {
-        group_id: this.group_id,
-        description: JSON.stringify(w),
-        v: "5.126",
-        access_token: this.token,
-      },
-    });
+      // for (let i = 0; i < wHid; i++) {
+      //   hidden[i] = this.getRandom(-1, 1);
+      // }
+
+      // w.h = hidden.join(",");
+
+      // for (let i = 0; i < wOut; i++) {
+      //   outputs[i] = this.getRandom(-1, 1);
+      // }
+
+      // w.o = outputs.join(",");
+
+      bridge.send("VKWebAppCallAPIMethod", {
+        method: "groups.edit",
+        params: {
+          group_id: this.group_id,
+          description: JSON.stringify(w),
+          v: "5.126",
+          access_token: this.token,
+        },
+      });
+    }
   }
 
   getWeights() {
