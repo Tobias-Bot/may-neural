@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/may-neural/static/css/main.163b2ab3.chunk.css",
+    "main.js": "/may-neural/static/js/main.e2dfac61.chunk.js",
+    "main.js.map": "/may-neural/static/js/main.e2dfac61.chunk.js.map",
+    "runtime-main.js": "/may-neural/static/js/runtime-main.369b6a7f.js",
+    "runtime-main.js.map": "/may-neural/static/js/runtime-main.369b6a7f.js.map",
+    "static/js/2.422c663f.chunk.js": "/may-neural/static/js/2.422c663f.chunk.js",
+    "static/js/2.422c663f.chunk.js.map": "/may-neural/static/js/2.422c663f.chunk.js.map",
+    "index.html": "/may-neural/index.html",
+    "static/css/main.163b2ab3.chunk.css.map": "/may-neural/static/css/main.163b2ab3.chunk.css.map",
+    "static/js/2.422c663f.chunk.js.LICENSE.txt": "/may-neural/static/js/2.422c663f.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/may-neural/static/media/Caveat-SemiBold.e7ed0c9b.ttf"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.369b6a7f.js",
+    "static/js/2.422c663f.chunk.js",
+    "static/css/main.163b2ab3.chunk.css",
+    "static/js/main.e2dfac61.chunk.js"
+  ]
+}
