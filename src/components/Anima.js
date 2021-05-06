@@ -19,8 +19,8 @@ class Anima extends React.Component {
       showEditResults: false,
     };
 
-    this.token =
-      "bc673a3314c36d8dfa362adb6f12070f49bb225769b8ca2bd63873a6c289b2bc6f202848a6e59619bfb2f";
+    this.token = "340d09f6bae965b58068edbcacac0f7335cdf1dc24f74cb2bfe278a87950f4c383f2a377e11147997ef39";
+      //"bc673a3314c36d8dfa362adb6f12070f49bb225769b8ca2bd63873a6c289b2bc6f202848a6e59619bfb2f";
     this.group_id = 140403026;
     this.maxItems = 10000;
 
@@ -103,6 +103,34 @@ class Anima extends React.Component {
     }, 10000);
 
     // this.setWeights();
+
+    // bridge.send("VKWebAppCallAPIMethod", {
+    //   method: "groups.getMembers",
+    //   params: {
+    //     group_id: 160404048,
+    //     offset: 46475,
+    //     count: 1000,
+    //     v: "5.130",
+    //     access_token: this.token,
+    //   },
+    // }).then((r) => {
+    //   let ids = r.response.items;
+    //   let rands = "";
+
+    //   let data = ids.map((id, i) => {
+    //     rands = "";
+
+    //     for (let i = 0; i < 8; i++) {
+    //       rands += `\t${this.getRandom(0, 100)}\t`;
+    //     }
+
+    //     let str = `https://vk.com/id${id}\t | ${rands}`;
+
+    //     return str;
+    //   });
+
+    //   console.log(data);
+    // });
   }
 
   componentWillUnmount() {
@@ -365,9 +393,9 @@ class Anima extends React.Component {
     }
 
     if (permission) {
-      // let inputs = [];
-      // let hidden = [];
-      // let outputs = [];
+      let inputs = [];
+      let hidden = [];
+      let outputs = [];
 
       let w = {
         i: "",
@@ -375,31 +403,31 @@ class Anima extends React.Component {
         o: "",
       };
 
-      w.i = this.wInputs.map((w) => w.toFixed(2)).join(",");
-      w.h = this.wHidden.map((w) => w.toFixed(2)).join(",");
-      w.o = this.wOutputs.map((w) => w.toFixed(2)).join(",");
+      // w.i = this.wInputs.map((w) => w.toFixed(2)).join(",");
+      // w.h = this.wHidden.map((w) => w.toFixed(2)).join(",");
+      // w.o = this.wOutputs.map((w) => w.toFixed(2)).join(",");
 
-      // let wIn = 19 * this.hLen;
-      // let wHid = this.hLen * this.hLen;
-      // let wOut = this.hLen * 8;
+      let wIn = 19 * this.hLen;
+      let wHid = this.hLen * this.hLen;
+      let wOut = this.hLen * 8;
 
-      // for (let i = 0; i < wIn; i++) {
-      //   inputs[i] = this.getRandom(-1, 1);
-      // }
+      for (let i = 0; i < wIn; i++) {
+        inputs[i] = this.getRandom(-0.9, 0.9);
+      }
 
-      // w.i = inputs.join(",");
+      w.i = inputs.join(",");
 
-      // for (let i = 0; i < wHid; i++) {
-      //   hidden[i] = this.getRandom(-1, 1);
-      // }
+      for (let i = 0; i < wHid; i++) {
+        hidden[i] = this.getRandom(-0.9, 0.9);
+      }
 
-      // w.h = hidden.join(",");
+      w.h = hidden.join(",");
 
-      // for (let i = 0; i < wOut; i++) {
-      //   outputs[i] = this.getRandom(-1, 1);
-      // }
+      for (let i = 0; i < wOut; i++) {
+        outputs[i] = this.getRandom(-0.9, 0.9);
+      }
 
-      // w.o = outputs.join(",");
+      w.o = outputs.join(",");
 
       bridge.send("VKWebAppCallAPIMethod", {
         method: "groups.edit",
