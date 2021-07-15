@@ -1,3 +1,15 @@
+# description
+
+Applications for compiling a psychological portrait of a person according to the profile of a social network. The program is based on a neural network that has been trained on an experimental choice. The web continues to learn with users adjusting the character trait scores of their chosen user. An analysis of both your profile and the profiles of the friends of the current user on the social network is available.
+
+# used
+
+React.js, HTML5, CSS3
+
+# review
+
+[watch the video](https://youtu.be/WBBWFWAvmFE)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
